@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Place for Shanu ✨</title>
+    
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Swiper.js for swipeable galleries -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Google Fonts for a cute, modern feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom styles to bring the design to life */
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden; /* Prevent scrolling until main content is shown */
+        }
+
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+        
+        /* Particle canvas for background animations */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.6;
+        }
+
+        /* Diagonal background text */
+        #bg-text {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200vw;
+            height: 200vh;
+            display: flex;
+            flex-wrap: wrap;
+            transform: rotate(-30deg) translate(-25%, -25%);
+            font-size: 5rem;
+            font-weight: 800;
+            color: rgba(236, 72, 153, 0.05); /* very light pink */
+            z-index: -1;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        /* --- UPDATED Social Media Swiper Styling --- */
+        .social-swiper .swiper-slide {
+            transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            transform: scale(0.8);
+            opacity: 0.7;
+        }
+
+        .social-swiper .swiper-slide-active {
+            transform: scale(1.1); /* Makes the center logo pop */
+            opacity: 1;
+        }
+        /* --- END OF UPDATE --- */
+
+        .social-swiper .swiper-slide-active .social-username {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .social-username {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: translateY(10px);
+        }
+
+        /* Fade-in and out animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out forwards;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .fade-out {
+            animation: fadeOut 0.8s ease-in-out forwards;
+        }
+
+        /* Shake animation for wrong password */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-pink-50 text-gray-700">
+
+    <!-- The animated background canvas -->
+    <canvas id="particle-canvas"></canvas>
+    
+    <!-- The diagonal 'shanu' text background -->
+    <div id="bg-text">
+        <span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span><span>shanu&nbsp;</span>
+    </div>
+
+    <!-- Password Entry Page -->
+    <div id="landing-page" class="fixed inset-0 bg-pink-100/80 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12 text-center w-11/12 max-w-md">
+            <h1 class="font-pacifico text-4xl text-pink-500 mb-4">SHANU</h1>
+            <p class="mb-6 text-gray-500">Please enter the magic word to unlock the surprise.</p>
+            <input id="password-input" type="password" placeholder="Magic word..." class="w-full px-4 py-3 border-2 border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 transition">
+            <button id="enter-button" class="w-full mt-4 bg-pink-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-pink-600 transition-transform transform hover:scale-105">
+                Unlock
+            </button>
+            <p id="error-message" class="text-red-500 mt-3 h-5"></p>
+        </div>
+    </div>
+
+    <!-- Main Content of the Website (hidden initially) -->
+    <main id="main-content" class="hidden overflow-y-auto h-screen">
+        <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+            <!-- Profile Section -->
+            <header class="text-center py-12">
+                <!-- IMPORTANT: Replace this placeholder image URL with your sister's actual photo -->
+                <img src="images/shanu.jpg" alt="Shanu's Profile Picture" class="w-40 h-40 md:w-48 md:h-48 mx-auto rounded-full object-cover border-8 border-white shadow-xl">
+                <h1 class="font-pacifico text-5xl md:text-6xl text-pink-500 mt-6">Shanu</h1>
+                <p class="text-gray-500 text-lg mt-2">"Self love first"__✨ everything else follows🤞
+Learning.... growing.....💗 and glowing🦋🦋🦋</p>
+            </header>
+
+            <!-- About Her Section -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6 my-10">
+                <!-- You can edit the text inside these cards -->
+                <div class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg text-center transform hover:scale-105 transition-transform">
+                    <div class="text-4xl mb-3">🎨</div>
+                    <h3 class="text-xl font-semibold text-pink-600 mb-2">Hobbies</h3>
+                    <p class="text-gray-600">Currently just scrolling the insta all day</p>
+                </div>
+                <div class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg text-center transform hover:scale-105 transition-transform">
+                     <div class="text-4xl mb-3">📚</div>
+                    <h3 class="text-xl font-semibold text-pink-600 mb-2">Currently Studying</h3>
+                    <p class="text-gray-600">IDK</p>
+                </div>
+                <div class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg text-center transform hover:scale-105 transition-transform">
+                    <div class="text-4xl mb-3">💖</div>
+                    <h3 class="text-xl font-semibold text-pink-600 mb-2">Favorite Things</h3>
+                    <p class="text-gray-600">IDK</p>
+                </div>
+            </section>
+            
+            <!-- Family Section -->
+            <section class="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg text-center my-10">
+                <h2 class="text-3xl font-pacifico text-pink-500 mb-4">MY Wonderful Family</h2>
+                <!-- Edit the family member names here -->
+                <p class="text-lg text-gray-600">MOM: SEEMA, DAD: SURENDER, SISTERS: GUN GUN, MANSHIKA, BROTHER: PARTEEK</p>
+            </section>
+
+            <!-- Image Gallery Section -->
+            <section class="my-12">
+                <h2 class="text-3xl font-pacifico text-center text-pink-500 mb-6">ME <3</h2>
+                <div class="swiper image-swiper">
+                    <div class="swiper-wrapper">
+                        <!-- IMPORTANT: Replace these placeholder images with her actual photos -->
+                        <div class="swiper-slide"><img src="images/shanu1.jpg" class="rounded-2xl shadow-md object-cover w-full h-full"></div>
+                        <div class="swiper-slide"><img src="images/shanu2.jpg" class="rounded-2xl shadow-md object-cover w-full h-full"></div>
+                        <div class="swiper-slide"><img src="images/shanu3.jpg" class="rounded-2xl shadow-md object-cover w-full h-full"></div>
+                        <div class="swiper-slide"><img src="images/shanu4.jpg" class="rounded-2xl shadow-md object-cover w-full h-full"></div>
+                        <div class="swiper-slide"><img src="images/shanu5.jpg" class="rounded-2xl shadow-md object-cover w-full h-full"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Social Media Section -->
+            <section class="my-16">
+                 <h2 class="text-3xl font-pacifico text-center text-pink-500 mb-8">Find Me Online</h2>
+                 <div class="swiper social-swiper">
+                    <div class="swiper-wrapper items-center">
+                        <!-- 
+                            VERY IMPORTANT INSTRUCTIONS FOR SOCIAL MEDIA LOGOS:
+                            1. You CANNOT use local file paths like 'C:\Users\Images\logo.png'. This is for security reasons in all browsers.
+                            2. FIRST, upload your logo images to a free hosting service like 'imgur.com'.
+                            3. THEN, copy the direct image link (URL) they give you.
+                            4. FINALLY, paste that URL into the `src="..."` part of the `<img>` tag below, replacing the placeholder link.
+                        -->
+
+                        <!-- Instagram -->
+                        <div class="swiper-slide text-center">
+                            <a href="https://www.instagram.com/_astheticssss___/" target="_blank">
+                                <img src="images/instagram.png" alt="Instagram Logo" class="w-20 h-20 mx-auto rounded-2xl object-cover">
+                                <p class="social-username mt-3 font-semibold text-pink-700">@_astheticssss___</p>
+                            </a>
+                        </div>
+
+                        <!-- Twitter / X -->
+                        <div class="swiper-slide text-center">
+                             <a href="#" target="_blank">
+                                <img src="images/twitter.png" alt="X/Twitter Logo" class="w-20 h-20 mx-auto rounded-2xl object-cover">
+                                <p class="social-username mt-3 font-semibold text-blue-500">@shanu_tweets</p>
+                            </a>
+                        </div>
+
+                        <!-- GitHub -->
+                        <div class="swiper-slide text-center">
+                            <a href="https://www.threads.com/@_astheticssss___" target="_blank">
+                                <img src="images/threads.png" alt="threads" class="w-20 h-20 mx-auto rounded-2xl object-cover">
+                                <p class="social-username mt-3 font-semibold text-gray-800">@_astheticssss___</p>
+                            </a>
+                        </div>
+                        
+                        <!-- Behance -->
+                         <div class="swiper-slide text-center">
+                            <a href="#" target="_blank">
+                               <img src="images/facebook.png" alt="facebook" class="w-20 h-20 mx-auto rounded-2xl object-cover">
+                                <p class="social-username mt-3 font-semibold text-blue-700">@shanu</p>
+                            </a>
+                        </div>
+
+                    </div>
+                 </div>
+            </section>
+            <div style="text-align: center; font-size: x-small;">All copyright recievs©. Webpage Made by <a href="https://www.instagram.com/vikhyatvarun/" style="color: black;">@vikhyatvarun</a> </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Particle Animation Setup ---
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const particleCount = 50;
+            const colors = ["#ec4899", "#f472b6", "#f9a8d4", "#fbcfe8"];
+
+            class Particle {
+                constructor(x, y, size, color, speedX, speedY) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = size;
+                    this.color = color;
+                    this.speedX = speedX;
+                    this.speedY = speedY;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.size > 0.2) this.size -= 0.05;
+                }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    const size = Math.random() * 5 + 1;
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const speedX = Math.random() * 2 - 1;
+                    const speedY = Math.random() * 2 - 1;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particles.push(new Particle(x, y, size, color, speedX, speedY));
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                    if (particles[i].size <= 0.3) {
+                        particles.splice(i, 1);
+                        i--;
+                        const size = Math.random() * 5 + 1;
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const speedX = Math.random() * 2 - 1;
+                        const speedY = Math.random() * 2 - 1;
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        particles.push(new Particle(x, y, size, color, speedX, speedY));
+                    }
+                }
+                requestAnimationFrame(animateParticles);
+            }
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initParticles();
+            });
+
+            initParticles();
+            animateParticles();
+
+
+            // --- Password Logic ---
+            const landingPage = document.getElementById('landing-page');
+            const mainContent = document.getElementById('main-content');
+            const passwordInput = document.getElementById('password-input');
+            const enterButton = document.getElementById('enter-button');
+            const errorMessage = document.getElementById('error-message');
+
+            function unlockWebsite() {
+                if (passwordInput.value.toLowerCase() === 'shanu') {
+                    errorMessage.textContent = '';
+                    landingPage.classList.add('fade-out');
+                    setTimeout(() => {
+                        landingPage.style.display = 'none';
+                        mainContent.classList.remove('hidden');
+                        mainContent.classList.add('fade-in');
+                        document.body.style.overflow = 'auto'; // Allow scrolling
+                        initializeSwipers(); // Initialize swipers only after showing content
+                    }, 800);
+                } else {
+                    errorMessage.textContent = 'That\'s not the magic word!';
+                    passwordInput.classList.add('shake');
+                    setTimeout(() => {
+                        passwordInput.classList.remove('shake');
+                    }, 500);
+                }
+            }
+
+            enterButton.addEventListener('click', unlockWebsite);
+            passwordInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    unlockWebsite();
+                }
+            });
+
+
+            // --- Swiper Initialization ---
+            function initializeSwipers() {
+                const imageSwiper = new Swiper('.image-swiper', {
+                    effect: 'coverflow',
+                    grabCursor: true,
+                    centeredSlides: true,
+                    slidesPerView: 'auto',
+                    loop: true,
+                    autoplay: {
+                        delay: 2500,
+                        disableOnInteraction: false,
+                    },
+                    coverflowEffect: {
+                        rotate: 50,
+                        stretch: 0,
+                        depth: 100,
+                        modifier: 1,
+                        slideShadows: true,
+                    },
+                });
+
+                const socialSwiper = new Swiper('.social-swiper', {
+                    slidesPerView: 3,
+                    spaceBetween: 10,
+                    centeredSlides: true,
+                    loop: true,
+                    autoplay: {
+                        delay: 3000,
+                    },
+                    breakpoints: {
+                        640: {
+                          slidesPerView: 3,
+                          spaceBetween: 20,
+                        },
+                        768: {
+                          slidesPerView: 5,
+                          spaceBetween: 40,
+                        },
+                    },
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
